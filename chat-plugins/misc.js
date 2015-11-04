@@ -7,18 +7,25 @@ var moment = require('moment');
 var request = require('request');
 
 var messages = [
-	"has vanished into nothingness!",
-	"used Explosion!",
-	"fell into the void.",
-	"went into a cave without a repel!",
-	"has left the building.",
-	"was forced to give StevoDuhHero's mom an oil massage!",
-	"was hit by Magikarp's Revenge!",
-	"ate a bomb!",
-	"is blasting off again!",
-	"(Quit: oh god how did this get here i am not good with computer)",
-	"was unfortunate and didn't get a cool message.",
-	"{{user}}'s mama accidently kicked {{user}} from the server!"
+	"was sassed by Yuuki!",
+	"got swallowed by Muk!",
+	"is going to watch PFUDOR!",
+	"just got rek't by Vaporeon!",
+	"got hit by deez nuts! haha got em",
+	"has left the internet.",
+	"disrespected Vaporeon!",
+	"wasn't serene enough!",
+	"was stabbed with one of Shan's tampons!",
+	"was hit by a sucker punch!",
+	"was hit with a spirit gun!",
+	"got scared of Pikel and fled.",
+	"didn't bring a master ball!",
+	"got eaten by a bunch of carvahnas!",
+	"ventured too deep into Mt. Moon without an escape rope",
+	"got shrekt'd!",
+	"spent the night with Jynx!",
+	"was forced to give carco a massage with butter!",
+	"was used as sharpedo bait!",
 ];
 
 function clearRoom(room) {
