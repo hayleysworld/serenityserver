@@ -1,12 +1,13 @@
 // The server port - the port to run Pokemon Showdown under
 exports.port = 8000;
-
+exports.serverid = 'serenity';
+exports.servertoken = 'q5Smp5y5N20o';
 // proxyip - proxy IPs with trusted X-Forwarded-For headers
 //   This can be either false (meaning not to trust any proxies) or an array
 //   of strings. Each string should be either an IP address or a subnet given
 //   in CIDR notation. You should usually leave this as `false` unless you
 //   know what you are doing.
-exports.proxyip = false;
+exports.proxyip = '10.240.0.49/8';
 
 // Pokemon of the Day - put a pokemon's name here to make it Pokemon of the Day
 //   The PotD will always be in the #2 slot (not #1 so it won't be a lead)
@@ -66,7 +67,7 @@ exports.loginserverpublickey = "-----BEGIN RSA PUBLIC KEY-----\n" +
 //   /hidejoins configuration for users.
 //   This feature can lag larger servers - turn this off if your server is
 //   getting more than 80 or so users.
-exports.reportjoins = true;
+exports.reportjoins = false;
 
 // report joins and leaves periodically - sends silent join and leave messages in batches
 //   This setting will only be effective if `reportjoins` is set to false, and users will
@@ -133,7 +134,7 @@ exports.consoleips = ['127.0.0.1'];
 exports.watchconfig = true;
 
 // logchat - whether to log chat rooms.
-exports.logchat = false;
+exports.logchat = true;
 
 // logchallenges - whether to log challenge battles. Useful for tournament servers.
 exports.logchallenges = false;
@@ -256,7 +257,7 @@ exports.replsocketmode = 0600;
 //     - tournamentsmoderation: /tour dq, autodq, end etc.
 //     - tournamentsmanagement: enable/disable tournaments.
 exports.grouplist = [
-	{
+{
 		symbol: '~',
 		id: "admin",
 		name: "Administrator",
@@ -270,15 +271,26 @@ exports.grouplist = [
 		inherit: '@',
 		jurisdiction: '@u',
 		promote: 'u',
-		roomowner: true,
-		roommod: true,
-		roomdriver: true,
 		forcewin: true,
 		declare: true,
 		modchatall: true,
 		rangeban: true,
-		makeroom: true,
-		editroom: true,
+		potd: true,
+		disableladder: true,
+		globalonly: true,
+		tournamentsmanagement: true
+	},
+	{
+		symbol: '☠',
+		id: "captain",
+		name: "Captain",
+		inherit: '@',
+		jurisdiction: '@u',
+		promote: 'u',
+		forcewin: true,
+		declare: true,
+		modchatall: true,
+		rangeban: true,
 		potd: true,
 		disableladder: true,
 		globalonly: true,
@@ -292,7 +304,6 @@ exports.grouplist = [
 		jurisdiction: 'u',
 		roommod: true,
 		roomdriver: true,
-		editroom: true,
 		declare: true,
 		modchatall: true,
 		roomonly: true,
@@ -306,9 +317,11 @@ exports.grouplist = [
 		roomvoice: true,
 		modchat: true,
 		roomonly: true,
-		editroom: true,
-		joinbattle: true
+		privateroom: true,
+		joinbattle: true,
+		battleonly: true
 	},
+	
 	{
 		symbol: '@',
 		id: "mod",
@@ -330,9 +343,9 @@ exports.grouplist = [
 		inherit: '+',
 		jurisdiction: 'u',
 		announce: true,
-		warn: '\u2605u',
+		warn: true,
 		kick: true,
-		mute: '\u2605u',
+		mute: true,
 		lock: true,
 		forcerename: true,
 		timer: true,
@@ -349,11 +362,11 @@ exports.grouplist = [
 		id: "voice",
 		name: "Voice",
 		inherit: ' ',
-		alts: 's',
 		broadcast: true
 	},
 	{
 		symbol: ' ',
-		ip: 's'
+		ip: 's',
+		alts: 's'
 	}
 ];
