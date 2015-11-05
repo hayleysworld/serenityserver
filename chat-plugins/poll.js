@@ -243,5 +243,10 @@ exports.commands = {
 				"/poll timer [minutes] - Sets the poll to automatically end after [minutes]. Requires: % @ # & ~",
 				"/poll results - Shows the results of the poll without voting. NOTE: you can't go back and vote after using this.",
 				"/poll display - Displays the poll",
-				"/poll end - Ends a poll and displays the results. Requires: % @ # & ~"]
+				"/poll end - Ends a poll and displays the results. Requires: % @ # & ~"],
+  tournamentpoll: 'tierpoll',
+  tpoll: 'tierpoll',
+  tierpoll: function (room, user) {
+  if (user.can('ban', null, room)) return this.parse('/poll create Tournament Tier?, Ubers, OU, RU, UU, NU, PU, Random Battle, Battle factory, Challenge Cup 1v1, 1v1');
+},
 };
