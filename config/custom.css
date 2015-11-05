@@ -535,6 +535,10 @@ text-align: center;
   .ps-room.ps-room-opaque {
     background: #E3EEC3;
   }
+  
+  .battle {
+    background: url('http://pokemonwallpapers.org/wp-content/uploads/wallpapers/pokemon-christmas-wallpaper.jpg');
+  }
  
   .battle-log {
     background: #E3EEC3 url("http://i.imgur.com/EuI2AdX.png?1") top right no-repeat;
