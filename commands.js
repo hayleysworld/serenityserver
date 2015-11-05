@@ -127,7 +127,7 @@ var commands = exports.commands = {
 		target = this.splitTarget(target);
 		var targetUser = this.targetUser;
 		if (!target) {
-			this.errorReply("You forgot the comma.");
+			this.sendReply("You forgot the comma.");
 			return this.parse('/help msg');
 		}
 		this.pmTarget = (targetUser || this.targetUsername);
@@ -146,29 +146,29 @@ var commands = exports.commands = {
 			var userGroup = user.group;
 			if (Config.groupsranking.indexOf(userGroup) < Config.groupsranking.indexOf(Config.pmmodchat)) {
 				var groupName = Config.groups[Config.pmmodchat].name || Config.pmmodchat;
-				this.errorReply("Because moderated chat is set, you must be of rank " + groupName + " or higher to PM users.");
+				this.popupReply("Because moderated chat is set, you must be of rank " + groupName + " or higher to PM users.");
 				return false;
 			}
 		}
 
 		if (user.locked && !targetUser.can('lock')) {
-			return this.errorReply("You can only private message members of the moderation team (users marked by %, @, &, or ~) when locked.");
+			return this.popupReply("You can only private message members of the moderation team (users marked by %, @, &, or ~) when locked.");
 		}
 		if (targetUser.locked && !user.can('lock')) {
-			return this.errorReply("This user is locked and cannot PM.");
+			return this.popupReply("This user is locked and cannot PM.");
 		}
 		if (targetUser.ignorePMs && targetUser.ignorePMs !== user.group && !user.can('lock')) {
 			if (!targetUser.can('lock')) {
-				return this.errorReply("This user is blocking private messages right now.");
-			} else if (targetUser.can('bypassall')) {
-				return this.errorReply("This admin is too busy to answer private messages right now. Please contact a different staff member.");
+				return this.popupReply("This user is blocking Private Messages right now.");
+			} else if (targetUser.can('bypassall') && !user.can('broadcast')) {
+				return this.popupReply("This admin is too busy to answer Private Messages right now. Please use /requesthelp if you require assistance.");
 			}
 		}
 		if (user.ignorePMs && user.ignorePMs !== targetUser.group && !targetUser.can('lock')) {
-			return this.errorReply("You are blocking private messages right now.");
+			return this.popupReply("You are blocking private messages right now.");
 		}
 
-		target = this.canTalk(target, null, targetUser);
+		target = this.canTalk(target, null);
 		if (!target) return false;
 
 		if (target.charAt(0) === '/' && target.charAt(1) !== '/') {
@@ -184,38 +184,40 @@ var commands = exports.commands = {
 			case 'invite':
 			case 'inv':
 				var targetRoom = Rooms.search(innerTarget);
-				if (!targetRoom || targetRoom === Rooms.global) return this.errorReply('The room "' + innerTarget + '" does not exist.');
-				if (targetRoom.staffRoom && !targetUser.isStaff) return this.errorReply('User "' + this.targetUsername + '" requires global auth to join room "' + targetRoom.id + '".');
-				if (targetRoom.modjoin) {
-					if (targetRoom.auth && (targetRoom.isPrivate === true || targetUser.group === ' ') && !(targetUser.userid in targetRoom.auth)) {
-						this.parse('/roomvoice ' + targetUser.name, false, targetRoom);
-						if (!(targetUser.userid in targetRoom.auth)) {
-							return;
-						}
-					}
-				}
+				if (!targetRoom || targetRoom === Rooms.global) return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + '|/text The room "' + innerTarget + '" does not exist.');
+				if (targetRoom.staffRoom && !targetUser.isStaff) return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + '|/text User "' + this.targetUsername + '" requires global auth to join room "' + targetRoom.id + '".');
 				if (targetRoom.isPrivate === true && targetRoom.modjoin && targetRoom.auth) {
-					if (!(user.userid in targetRoom.auth)) {
-						return this.errorReply('The room "' + innerTarget + '" does not exist.');
-					}
 					if (Config.groupsranking.indexOf(targetRoom.auth[targetUser.userid] || ' ') < Config.groupsranking.indexOf(targetRoom.modjoin) && !targetUser.can('bypassall')) {
-						return this.errorReply('The user "' + targetUser.name + '" does not have permission to join "' + innerTarget + '".');
+						return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + '|/text The room "' + innerTarget + '" does not exist.');
 					}
 				}
 
 				target = '/invite ' + targetRoom.id;
 				break;
+			case 'declare':
+			case 'html':
+				if (!user.can('ban')) return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + "|/text /html - Access denied.");
+				if (target.indexOf(' ') < 0) return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + "|/text Usage: /" + targetCmd + " [message]");
+				try {
+					var frostcommands = require('./frost-commands.js');
+					target = '/html <span class="chat"><small>' + user.getIdentity().substr(0,1) + '</small></span><button class="astext" name="parseCommand" value="/user ' + user.name +
+						'"><font color="' + frostcommands.hashColor(user.userid) + '"><strong>' + Tools.escapeHTML(user.name) + ':</strong></font></button> ' + target.substr(target.indexOf(' '), target.length);
+					} catch (e) {}
+				break;
 			default:
-				return this.errorReply("The command '/" + innerCmd + "' was unrecognized or unavailable in private messages. To send a message starting with '/" + innerCmd + "', type '//" + innerCmd + "'.");
+				return connection.send('|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + "|/text The command '/" + innerCmd + "' was unrecognized or unavailable in private messages. To send a message starting with '/" + innerCmd + "', type '//" + innerCmd + "'.");
 			}
 		}
 
-		var emoteMsg = parseEmoticons(target, room, user, true);
-		if ((!user.blockEmoticons && !targetUser.blockEmoticons) && emoteMsg) target = '/html ' + emoteMsg;
-
 		var message = '|pm|' + user.getIdentity() + '|' + targetUser.getIdentity() + '|' + target;
 		user.send(message);
-		if (targetUser !== user) targetUser.send(message);
+		if (targetUser !== user) {
+			if (Users.ShadowBan.checkBanned(user)) {
+				Users.ShadowBan.addMessage(user, "Private to " + targetUser.getIdentity(), target);
+			} else {
+				targetUser.send(message);
+			}
+		}
 		targetUser.lastPM = user.userid;
 		user.lastPM = targetUser.userid;
 	},
