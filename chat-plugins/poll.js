@@ -138,7 +138,7 @@ exports.commands = {
 				options.push(params[i]);
 			}
 
-			if (options.length > 8) {
+			if (options.length > 8 && params[0] != 'Tournament Tier?') {
 				return this.errorReply("Too many options for poll (maximum is 8).");
 			}
 
@@ -246,7 +246,7 @@ exports.commands = {
 				"/poll end - Ends a poll and displays the results. Requires: % @ # & ~"],
   tournamentpoll: 'tierpoll',
   tpoll: 'tierpoll',
-  tierpoll: function (room, user) {
+  tierpoll: function (target, room, user) {
   if (user.can('ban', null, room)) return this.parse('/poll create Tournament Tier?, Ubers, OU, RU, UU, NU, PU, Random Battle, Battle factory, Challenge Cup 1v1, 1v1');
 },
 };
