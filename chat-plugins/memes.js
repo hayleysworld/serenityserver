@@ -20,4 +20,3 @@ exports.commands = {
     else this.errorReply('Meme does not exist.');
   },
 };
-//
