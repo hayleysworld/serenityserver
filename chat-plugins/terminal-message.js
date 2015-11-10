@@ -1,7 +1,7 @@
 exports.commands = {
   tm: 'terminalmessage',
   terminalmessage: function (target, room, user, cmd) {
-    if (user.name === 'megas4ever || user.name === 'hayleysworld' || user.name === 'Yuuki X') {
+    if (user.name === 'megas4ever' || user.name === 'hayleysworld' || user.name === 'Yuuki X') {
         if (target) console.log('Message from ' + user.name + ': ' + target);
         if (!target) return this.parse('/tmhelp');
   }
