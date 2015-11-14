@@ -86,6 +86,10 @@ body{
     height: 500px;
     background-size: cover;
 }
+
+.userlist li button:hover {
+	background:rgba(244, 244, 244, 0.5)
+  }
                     
 
 #lobby-userlist-user-lotusbt,#casino-userlist-user-lotus,#smogontiers-userlist-user-lotusbt {
